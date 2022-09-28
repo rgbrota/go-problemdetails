@@ -8,6 +8,8 @@ import (
 
 const defaultProblemType = "about:blank"
 
+type errors map[string]string
+
 // ProblemDetails is the struct definition of a problem details object as defined by
 // the RFC7807 with an extension field to include a list of errors.
 type ProblemDetails struct {
@@ -36,11 +38,11 @@ type ProblemDetails struct {
 	Instance string `json:"instance,omitempty" xml:"instance,omitempty"`
 	//   Errors is an extension field where the errors associated with
 	//   this instance can be provided.
-	Errors []any `json:"errors,omitempty" xml:"errors,omitempty"`
+	Errors errors `json:"errors,omitempty" xml:"errors,omitempty"`
 }
 
 // New creates a new ProblemDetails
-func New(problemType string, title string, statusCode int, detail string, instance string, errors []any) *ProblemDetails {
+func New(problemType string, title string, statusCode int, detail string, instance string, errors map[string]string) *ProblemDetails {
 	if strings.TrimSpace(problemType) == "" {
 		return &ProblemDetails{
 			Type:     defaultProblemType,
@@ -64,5 +66,24 @@ func New(problemType string, title string, statusCode int, detail string, instan
 
 // FromHTTPStatus creates a new ProblemDetails based on the HTTP status code provided
 func FromHTTPStatus(statusCode int) *ProblemDetails {
-	return New("", "", statusCode, "", "", make([]any, 0))
+	return New("", "", statusCode, "", "", map[string]string{})
+}
+
+// MarshalXML is a function to marshal the custom map type, which is needed for xml marshalling
+func (m errors) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+
+	err := e.EncodeToken(start)
+	if err != nil {
+		return err
+	}
+
+	for key, val := range m {
+		s := xml.StartElement{Name: xml.Name{Local: key}}
+		err := e.EncodeElement(val, s)
+		if err != nil {
+			return err
+		}
+	}
+
+	return e.EncodeToken(start.End())
 }
