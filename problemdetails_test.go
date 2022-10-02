@@ -75,23 +75,6 @@ func TestNew(t *testing.T) {
 				Instance: "example-1",
 			},
 		},
-		{
-			name: "status_http_400_error",
-			args: args{
-				problemType: "https://some-domain.com/validation-failed",
-				title:       "Validation error",
-				statusCode:  400,
-				detail:      "Your request parameters didn't validate",
-				instance:    "https://api.some-domain.com/example",
-			},
-			expected: &ProblemDetails{
-				Type:     "https://some-domain.com/validation-failed",
-				Title:    "Validation error",
-				Status:   400,
-				Detail:   "Your request parameters didn't validate",
-				Instance: "https://api.some-domain.com/example",
-			},
-		},
 	}
 
 	for _, test := range tests {
