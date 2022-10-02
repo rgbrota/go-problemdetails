@@ -16,7 +16,6 @@ func TestNew(t *testing.T) {
 		statusCode  int
 		detail      string
 		instance    string
-		errors      map[string]string
 	}
 	type test struct {
 		name     string
@@ -33,7 +32,6 @@ func TestNew(t *testing.T) {
 				statusCode:  200,
 				detail:      "",
 				instance:    "",
-				errors:      map[string]string{},
 			},
 			expected: &ProblemDetails{
 				Type:     defaultProblemType,
@@ -41,7 +39,6 @@ func TestNew(t *testing.T) {
 				Status:   200,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 		},
 		{
@@ -52,7 +49,6 @@ func TestNew(t *testing.T) {
 				statusCode:  404,
 				detail:      "Object with id 1 was not found",
 				instance:    "https://api.some-domain.com/xxx/1",
-				errors:      map[string]string{},
 			},
 			expected: &ProblemDetails{
 				Type:     "https://some-domain.com/not_found",
@@ -60,7 +56,6 @@ func TestNew(t *testing.T) {
 				Status:   404,
 				Detail:   "Object with id 1 was not found",
 				Instance: "https://api.some-domain.com/xxx/1",
-				Errors:   map[string]string{},
 			},
 		},
 		{
@@ -71,7 +66,6 @@ func TestNew(t *testing.T) {
 				statusCode:  500,
 				detail:      "There was an error",
 				instance:    "example-1",
-				errors:      map[string]string{},
 			},
 			expected: &ProblemDetails{
 				Type:     "/internal_server_error",
@@ -79,39 +73,30 @@ func TestNew(t *testing.T) {
 				Status:   500,
 				Detail:   "There was an error",
 				Instance: "example-1",
-				Errors:   map[string]string{},
 			},
 		},
 		{
-			name: "status_http_400_errors",
+			name: "status_http_400_error",
 			args: args{
 				problemType: "https://some-domain.com/validation-failed",
-				title:       "Validation errors",
+				title:       "Validation error",
 				statusCode:  400,
 				detail:      "Your request parameters didn't validate",
 				instance:    "https://api.some-domain.com/example",
-				errors: map[string]string{
-					"Field1": "Does not match the regular expression",
-					"Field2": "Value should not be bigger than 10",
-				},
 			},
 			expected: &ProblemDetails{
 				Type:     "https://some-domain.com/validation-failed",
-				Title:    "Validation errors",
+				Title:    "Validation error",
 				Status:   400,
 				Detail:   "Your request parameters didn't validate",
 				Instance: "https://api.some-domain.com/example",
-				Errors: map[string]string{
-					"Field1": "Does not match the regular expression",
-					"Field2": "Value should not be bigger than 10",
-				},
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual := New(test.args.problemType, test.args.title, test.args.statusCode, test.args.detail, test.args.instance, test.args.errors)
+			actual := New(test.args.problemType, test.args.title, test.args.statusCode, test.args.detail, test.args.instance)
 			if !reflect.DeepEqual(actual, test.expected) {
 				t.Fatalf("[actual]= %+v, [expected]= %+v", actual, test.expected)
 			}
@@ -141,7 +126,6 @@ func TestFromHTTPStatus(t *testing.T) {
 				Status:   200,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 		},
 		{
@@ -155,7 +139,6 @@ func TestFromHTTPStatus(t *testing.T) {
 				Status:   500,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 		},
 		{
@@ -169,7 +152,6 @@ func TestFromHTTPStatus(t *testing.T) {
 				Status:   0,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 		},
 	}
@@ -200,24 +182,19 @@ func TestJSONMarshal(t *testing.T) {
 				Status:   200,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 			expected: fmt.Sprintf(`{"type":"%s","title":"%s","status":200}`, defaultProblemType, http.StatusText(200)),
 		},
 		{
-			name: "status_http_400_errors",
+			name: "status_http_400_error",
 			args: &ProblemDetails{
 				Type:     "https://some-domain.com/validation-failed",
-				Title:    "Validation errors",
+				Title:    "Validation error",
 				Status:   400,
 				Detail:   "Your request parameters didn't validate",
 				Instance: "https://api.some-domain.com/example",
-				Errors: map[string]string{
-					"Field1": "Does not match the regular expression",
-					"Field2": "Value should not be bigger than 10",
-				},
 			},
-			expected: `{"type":"https://some-domain.com/validation-failed","title":"Validation errors","status":400,"detail":"Your request parameters didn't validate","instance":"https://api.some-domain.com/example","errors":{"Field1":"Does not match the regular expression","Field2":"Value should not be bigger than 10"}}`,
+			expected: `{"type":"https://some-domain.com/validation-failed","title":"Validation error","status":400,"detail":"Your request parameters didn't validate","instance":"https://api.some-domain.com/example"}`,
 		},
 	}
 
@@ -250,24 +227,19 @@ func TestXMLMarshal(t *testing.T) {
 				Status:   200,
 				Detail:   "",
 				Instance: "",
-				Errors:   map[string]string{},
 			},
 			expected: fmt.Sprintf(`<problem xmlns="urn:ietf:rfc:7807"><type>%s</type><title>%s</title><status>200</status></problem>`, defaultProblemType, http.StatusText(200)),
 		},
 		{
-			name: "status_http_400_errors",
+			name: "status_http_400_error",
 			args: &ProblemDetails{
 				Type:     "https://some-domain.com/validation-failed",
-				Title:    "Validation errors",
+				Title:    "Validation error",
 				Status:   400,
 				Detail:   "Your request parameters didn't validate",
 				Instance: "https://api.some-domain.com/example",
-				Errors: map[string]string{
-					"Field1": "Does not match the regular expression",
-					"Field2": "Value should not be bigger than 10",
-				},
 			},
-			expected: `<problem xmlns="urn:ietf:rfc:7807"><type>https://some-domain.com/validation-failed</type><title>Validation errors</title><status>400</status><detail>Your request parameters didn&#39;t validate</detail><instance>https://api.some-domain.com/example</instance><errors><Field1>Does not match the regular expression</Field1><Field2>Value should not be bigger than 10</Field2></errors></problem>`,
+			expected: `<problem xmlns="urn:ietf:rfc:7807"><type>https://some-domain.com/validation-failed</type><title>Validation error</title><status>400</status><detail>Your request parameters didn&#39;t validate</detail><instance>https://api.some-domain.com/example</instance></problem>`,
 		},
 	}
 
