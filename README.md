@@ -28,7 +28,7 @@ There are two ways to create a new instance: from scratch providing information 
 
 The function ```FromHTTPStatus``` is the easiest way to create a new instance of the struct. It only requires the HTTP status code, the rest of the fields will have a default value, and some fields will not be marshalled.
 
-```
+```go
 pd := FromHTTPStatus(http.StatusInternalServerError)
 ```
 
@@ -56,7 +56,7 @@ It doesn't provide much context, but depending on the error it can be a convenie
 
 The function ```New``` allows you to create an instance by passing all the fields. By using this method of creating a ```ProblemDetails``` we can provide much more context about what happened.
 
-```
+```go
 pd := New("https://some-domain.com/not_found", "Not Found", http.StatusNotFound, "The object with id 5 was not found", "https://some-domain.com/objects/5")
 ```
 
