@@ -14,7 +14,7 @@ The objective of problem details is to provide a way to carry machine-readable d
 
 ## Usage
 
-This repository contains a struct named ```ProblemDetails```, which should be used as a response in HTTP APIs. It is prepared to be used by the JSON (encoding/json) and XML (encoding/xml) marshaller provided by the standard library. 
+This repository contains a struct named ```ProblemDetails```, which should be used as a response in HTTP APIs when dealing with errors. It is prepared to be used by the JSON (encoding/json) and XML (encoding/xml) marshaller provided by the standard library. 
 
 A couple of things you will have to pay attention to in order to follow the specification when using ```ProblemDetails``` in your APIs:
 - Set the proper ```content-type``` header value (```application/problem+json``` or ```application/problem+xml```) in your responses
