@@ -4,7 +4,9 @@
 [![Build status](https://github.com/rgbrota/go-problemdetails/actions/workflows/ci.yml/badge.svg)](https://github.com/rgbrota/go-problemdetails/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/report/github.com/rgbrota/go-problemdetails)](https://goreportcard.com/report/github.com/rgbrota/go-problemdetails)
 
-Problem details specification [RFC-7807] implementation library written in Go. 
+## About
+
+Problem details specification [RFC-7807] implementation library written in Go.
 
 The objective of problem details is to provide a way to carry machine-readable details of errors in a HTTP response to avoid the need to define new error response formats for HTTP APIs. For more information see [RFC-7807](https://www.rfc-editor.org/rfc/rfc7807).
 
@@ -12,7 +14,7 @@ The objective of problem details is to provide a way to carry machine-readable d
 
 ```go get github.com/rgbrota/go-problemdetails```
 
-## Usage
+## Getting started
 
 This repository contains a struct named ```ProblemDetails```, which should be used as a response in HTTP APIs when dealing with errors. It is prepared to be used by the JSON (encoding/json) and XML (encoding/xml) marshaller provided by the standard library. 
 
@@ -24,7 +26,7 @@ For more information on how to be compliant with the specification, please see [
 
 There are two ways to create a new instance: from scratch providing information for all the fields and from a HTTP status code.
 
-### Creating a new ProblemDetails from a status code
+### Creating a new ProblemDetails from a HTTP status code
 
 The function ```FromHTTPStatus``` is the easiest way to create a new instance of the struct. It only requires the HTTP status code, the rest of the fields will have a default value, and some fields will not be marshalled.
 
@@ -32,7 +34,7 @@ The function ```FromHTTPStatus``` is the easiest way to create a new instance of
 pd := FromHTTPStatus(http.StatusInternalServerError)
 ```
 
-This will create a new ```ProblemDetails``` struct that would be marshalled to the following structure:
+This will create a new ```ProblemDetails``` instance that would be marshalled to the following structure:
 
 ```json
 {
@@ -60,7 +62,7 @@ The function ```New``` allows you to create an instance by passing all the field
 pd := New("https://some-domain.com/not_found", "Not Found", http.StatusNotFound, "The object with id 5 was not found", "https://some-domain.com/objects/5")
 ```
 
-This will create a new ```ProblemDetails``` struct that would be marshalled to the following structure:
+This will create a new ```ProblemDetails``` instance that would be marshalled to the following structure:
 
 ```json
 {
@@ -88,7 +90,7 @@ The specification includes the possibility to add custom fields to the ```Proble
 
 For example, we can take look at how ```ProblemDetails``` is used to provide validation errors in the ASP.NET world [in the following documentation](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.validationproblemdetails?view=aspnetcore-6.0). The gist is that an ```Errors``` dictionary is added to the base struct definition as an extension field to provide error context by using a ```map[string][]string``` where the key is the field name and the value is a list of errors associated with it. 
 
-The implementation of something similar would look like the following:
+The implementation of something similar using this library would look like the following:
 
 ```go
 type ValidationProblemDetails struct {
