@@ -2,7 +2,7 @@
 
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 [![Build status](https://github.com/rgbrota/go-problemdetails/actions/workflows/ci.yml/badge.svg)](https://github.com/rgbrota/go-problemdetails/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/report/github.com/rgbrota/go-problemdetails)](https://goreportcard.com/report/github.com/rgbrota/go-problemdetails)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rgbrota/go-problemdetails)](https://goreportcard.com/report/github.com/rgbrota/go-problemdetails)
 
 ## About
 
