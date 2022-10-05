@@ -9,7 +9,7 @@ import (
 const defaultProblemType = "about:blank"
 
 // ProblemDetails is the struct definition of a problem details object as defined by
-// the RFC7807 with an extension field to include a list of errors.
+// the RFC7807.
 type ProblemDetails struct {
 	XMLName xml.Name `json:"-" xml:"urn:ietf:rfc:7807 problem"`
 	//   Type is a URI reference [RFC3986] that identifies the
